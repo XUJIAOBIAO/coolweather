@@ -18,15 +18,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ChooseAreaActivity extends Activity{
+public class ChooseAreaActivity extends Activity {
 	public static final int LEVEL_PROVINCE=0;
 	public static final int LEVEL_CITY=1;
 	public static final int LEVEL_COUNTRY=2;
@@ -42,12 +44,14 @@ public class ChooseAreaActivity extends Activity{
 	private Province selectedProvince;
 	private City selectedCity;
 	private ProgressDialog progressDialog;
+	private Boolean isFromWeatherActivity;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-		if(pref.getBoolean("city_selected",false)){
+		isFromWeatherActivity=getIntent().getBooleanExtra("from_weather_activity",false);
+		if(pref.getBoolean("city_selected",false)&&!isFromWeatherActivity){
 			Intent intent=new Intent(this,WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -199,8 +203,12 @@ public class ChooseAreaActivity extends Activity{
     		 queryCities();
     	 }else if(currentLevel==LEVEL_CITY){
     		 queryProvinces();
-    	 }else{
-    		 finish();
+    	 }else {
+    		 if(isFromWeatherActivity){
+    		 Intent intent=new Intent(this,WeatherActivity.class);
+    		 startActivity(intent);
     	 }
+    		 finish();
+     }
      }
 }
